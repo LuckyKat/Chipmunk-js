@@ -209,7 +209,7 @@ cp.momentForBox2 = function(m, box)
 {
 	var width = box.r - box.l;
 	var height = box.t - box.b;
-	var offset = vmult([box.l + box.r, box.b + box.t], 0.5);
+	var offset = vmult(cp.v(box.l + box.r, box.b + box.t), 0.5);
 	
 	// TODO NaN when offset is 0 and m is INFINITY	
 	return cp.momentForBox(m, width, height) + m*vlengthsq(offset);
@@ -1939,6 +1939,7 @@ var SpatialIndex = cp.SpatialIndex = function(staticIndex)
 };
 
 // Collide the objects in a dynamic index against the objects in a static index using the query callback function.
+// This only does broad phase collision checking.
 SpatialIndex.prototype.collideStatic = function(staticIndex, func)
 {
 	if(staticIndex.count > 0){
@@ -2527,7 +2528,7 @@ BBTree.prototype.reindexQuery = function(func)
 	var staticRoot = staticIndex && staticIndex.root;
 	
 	this.root.markSubtree(this, staticRoot, func);
-	if(staticIndex && !staticRoot) this.collideStatic(this, staticIndex, func);
+	if(staticIndex && !staticRoot) this.collideStatic(staticIndex, func);
 	
 	this.incrementStamp();
 };
